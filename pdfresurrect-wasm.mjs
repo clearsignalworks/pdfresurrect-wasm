@@ -68,6 +68,17 @@ export async function extractVersions(pdfBytes) {
 
     // Clean up any previous runs
     try {
+        // Remove old directory and all files in it
+        const files = wasm.FS.readdir('/input-versions');
+        for (const file of files) {
+            if (file !== '.' && file !== '..') {
+                try {
+                    wasm.FS.unlink(`/input-versions/${file}`);
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+        }
         wasm.FS.rmdir('/input-versions');
     } catch (e) {
         // Directory doesn't exist, that's fine
@@ -75,6 +86,12 @@ export async function extractVersions(pdfBytes) {
 
     try {
         wasm.FS.unlink('/input.pdf');
+    } catch (e) {
+        // File doesn't exist, that's fine
+    }
+
+    try {
+        wasm.FS.unlink('/input.summary');
     } catch (e) {
         // File doesn't exist, that's fine
     }
