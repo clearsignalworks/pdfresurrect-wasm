@@ -3,3 +3,4 @@ config.status
 Makefile
 pdfresurrect
 *.o
+.DS_Store

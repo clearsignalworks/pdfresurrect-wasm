@@ -1,0 +1,46 @@
+{
+  "name": "pdfresurrect-wasm",
+  "version": "1.0.0",
+  "description": "Extract hidden versions from PDF incremental updates - WebAssembly port of pdfresurrect",
+  "type": "module",
+  "main": "pdfresurrect-wasm.mjs",
+  "types": "pdfresurrect-wasm.d.ts",
+  "exports": {
+    ".": {
+      "import": "./pdfresurrect-wasm.mjs",
+      "types": "./pdfresurrect-wasm.d.ts"
+    }
+  },
+  "files": [
+    "pdfresurrect-wasm.mjs",
+    "pdfresurrect-wasm.d.ts",
+    "pdfresurrect_full.js",
+    "pdfresurrect_full.wasm",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "pdf",
+    "forensics",
+    "wasm",
+    "webassembly",
+    "version-history",
+    "incremental-updates",
+    "redaction",
+    "document-analysis",
+    "pdfresurrect"
+  ],
+  "author": "Clear Signal Works",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clearsignalworks/pdfresurrect-wasm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/clearsignalworks/pdfresurrect-wasm/issues"
+  },
+  "homepage": "https://github.com/clearsignalworks/pdfresurrect-wasm#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

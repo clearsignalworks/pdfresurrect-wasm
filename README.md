@@ -1,12 +1,16 @@
 # pdfresurrect-wasm
 
+[![npm version](https://badge.fury.io/js/pdfresurrect-wasm.svg)](https://www.npmjs.com/package/pdfresurrect-wasm)
+
 WebAssembly port of [pdfresurrect](https://github.com/enferex/pdfresurrect) - Extract hidden versions from PDF incremental updates.
 
-## Status
+## Installation
 
-✅ **VALIDATED** - Successfully extracts multiple versions from real-world PDFs (Snowden documents)
-
-**Not yet published to npm.**
+```bash
+npm install pdfresurrect-wasm
+# or
+bun add pdfresurrect-wasm
+```
 
 ## What It Does
 
@@ -17,7 +21,7 @@ pdfresurrect-wasm extracts these hidden versions, revealing the document's full 
 ## Quick Start
 
 ```javascript
-import { extractVersions } from './pdfresurrect-wasm.mjs';
+import { extractVersions } from 'pdfresurrect-wasm';
 
 const pdfBytes = await fetch('document.pdf').then(r => r.arrayBuffer());
 const versions = await extractVersions(new Uint8Array(pdfBytes));
@@ -27,6 +31,19 @@ versions.forEach(v => {
   console.log(`Version ${v.number}: ${v.size} bytes`);
   // v.pdfBytes is a Uint8Array - save or display
 });
+```
+
+### Browser Usage
+
+The library works in browsers with WebAssembly support. Note that you'll need to configure your bundler to handle the `.wasm` file. For Vite/Astro:
+
+```javascript
+// vite.config.js
+export default {
+  optimizeDeps: {
+    exclude: ['pdfresurrect-wasm']
+  }
+}
 ```
 
 ## API
