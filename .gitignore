@@ -4,3 +4,4 @@ Makefile
 pdfresurrect
 *.o
 .DS_Store
+tmp/
