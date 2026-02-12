@@ -7,7 +7,7 @@
 /**
  * A single version extracted from a PDF's incremental update history
  */
-export interface Version {
+export interface PDFVersion {
   /** 1-indexed version number (1 is the earliest/original version) */
   number: number;
   /** Complete PDF bytes for this version (valid, openable PDF) */
@@ -37,7 +37,7 @@ export interface Version {
  * saveFile(versions[0].pdfBytes, 'original.pdf');
  * ```
  */
-export function extractVersions(pdfBytes: Uint8Array): Promise<Version[]>;
+export function extractVersions(pdfBytes: Uint8Array): Promise<PDFVersion[]>;
 
 /**
  * Get the number of versions in a PDF without extracting them.
@@ -54,3 +54,12 @@ export function getVersionCount(pdfBytes: Uint8Array): Promise<number>;
  * @returns true if the PDF has more than one version
  */
 export function hasMultipleVersions(pdfBytes: Uint8Array): Promise<boolean>;
+
+/**
+ * Find the byte offset of all %%EOF markers in a PDF.
+ * Useful for determining actual version boundaries.
+ *
+ * @param pdfBytes - Raw bytes of the PDF file
+ * @returns Array of byte offsets at the end of each %%EOF marker
+ */
+export function findEofBoundaries(pdfBytes: Uint8Array): number[];

@@ -35,16 +35,25 @@ versions.forEach(v => {
 
 ### Browser Usage
 
-The library works in browsers with WebAssembly support. Note that you'll need to configure your bundler to handle the `.wasm` file. For Vite/Astro:
+Requires WebAssembly support (Chrome 57+, Firefox 52+, Safari 11+, Node 16+).
+
+You'll need to configure your bundler to handle the `.wasm` file:
 
 ```javascript
-// vite.config.js
+// Vite / Astro
 export default {
   optimizeDeps: {
     exclude: ['pdfresurrect-wasm']
   }
 }
+
+// webpack 5
+module.exports = {
+  experiments: { asyncWebAssembly: true }
+}
 ```
+
+**Note:** This is an ESM-only package (`"type": "module"`). For CommonJS projects, use dynamic `import()`.
 
 ## API
 
@@ -66,17 +75,16 @@ Tested with Snowden NSA documents known to contain deleted content:
 - ✅ Performance: 19.65ms for 134KB PDF
 - ✅ Binary size: 97KB total
 
-## Project Structure
+## Package Contents
 
 ```
 pdfresurrect-wasm/
-├── pdfresurrect-wasm.mjs      # Main API
+├── pdfresurrect-wasm.mjs      # Main API (ESM)
+├── pdfresurrect-wasm.d.ts     # TypeScript definitions
 ├── pdfresurrect_full.js       # Emscripten glue code
 ├── pdfresurrect_full.wasm     # Compiled binary (37KB)
-├── test/                      # Test suite
-├── examples/                  # Example PDFs (Snowden doc)
-├── docs/                      # WASM compilation findings
-└── src/                       # Original C source (pdfresurrect)
+├── README.md
+└── LICENSE                    # BSD-3-Clause
 ```
 
 ## Credits

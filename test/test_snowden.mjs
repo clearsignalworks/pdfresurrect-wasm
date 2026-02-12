@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { extractVersions, getVersionCount, hasMultipleVersions } from './pdfresurrect-wasm.mjs';
+import { extractVersions, getVersionCount, hasMultipleVersions } from '../pdfresurrect-wasm.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

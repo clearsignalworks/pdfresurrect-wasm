@@ -11,7 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Load WASM module
 console.log('Loading pdfresurrect WASM module...');
-const createModule = (await import('./pdfresurrect_full.js')).default;
+const createModule = (await import('../pdfresurrect_full.js')).default;
 const wasm = await createModule();
 
 console.log('✅ WASM module loaded successfully\n');

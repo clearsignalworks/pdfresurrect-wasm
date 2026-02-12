@@ -28,9 +28,11 @@
     "incremental-updates",
     "redaction",
     "document-analysis",
-    "pdfresurrect"
+    "pdfresurrect",
+    "pdf-analysis",
+    "pdf-version-history"
   ],
-  "author": "Clear Signal Works",
+  "author": "Clear Signal Works <hello@clearsignalworks.com>",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",

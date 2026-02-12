@@ -108,14 +108,36 @@ export async function extractVersions(pdfBytes) {
         wasm.print = () => {};  // Suppress stdout
         wasm.printErr = () => {}; // Suppress stderr
 
-        const extractExitCode = wasm.callMain(['/input.pdf', '-w']);
-
-        // Restore output
-        wasm.print = originalPrint;
-        wasm.printErr = originalPrintErr;
+        let extractExitCode;
+        try {
+            extractExitCode = wasm.callMain(['/input.pdf', '-w']);
+        } catch (exitErr) {
+            // Emscripten throws ExitStatus on C exit() calls, which leaves
+            // the WASM module in an undefined state. Reset so next call
+            // reinitializes cleanly.
+            wasmModule = null;
+            wasmInitPromise = null;
+            throw new Error(
+                `pdfresurrect crashed (likely malformed PDF): ${exitErr.message || exitErr}`
+            );
+        } finally {
+            // Restore output even if callMain throws
+            wasm.print = originalPrint;
+            wasm.printErr = originalPrintErr;
+        }
 
         if (extractExitCode !== 0) {
-            throw new Error(`pdfresurrect failed with exit code ${extractExitCode}`);
+            console.warn(
+                `[pdfresurrect-wasm] Version extraction returned exit code ${extractExitCode}. ` +
+                `Falling back to single-version mode.`
+            );
+            const clonedBytes = new Uint8Array(pdfBytes.length);
+            clonedBytes.set(pdfBytes);
+            return [{
+                number: 1,
+                pdfBytes: clonedBytes,
+                size: clonedBytes.length
+            }];
         }
 
         // Read extracted version files from virtual filesystem
@@ -127,10 +149,12 @@ export async function extractVersions(pdfBytes) {
             files = wasm.FS.readdir(dirName);
         } catch (e) {
             // Directory doesn't exist = only 1 version (pdfresurrect exits early)
+            const clonedBytes = new Uint8Array(pdfBytes.length);
+            clonedBytes.set(pdfBytes);
             return [{
                 number: 1,
-                pdfBytes: pdfBytes,
-                size: pdfBytes.length
+                pdfBytes: clonedBytes,
+                size: clonedBytes.length
             }];
         }
 
@@ -145,15 +169,23 @@ export async function extractVersions(pdfBytes) {
             .filter(x => x !== null)
             .sort((a, b) => a.version - b.version);
 
+        // Use %%EOF boundaries for accurate version sizes
+        // pdfresurrect copies the full file for each version, so file size is misleading
+        const eofBoundaries = findEofBoundaries(pdfBytes);
+
         // Read each version file
         for (const { filename, version } of pdfFiles) {
             const filePath = `${dirName}/${filename}`;
             const bytes = wasm.FS.readFile(filePath);
+            const clonedBytes = new Uint8Array(bytes.length);
+            clonedBytes.set(bytes);
 
+            const calculatedSize = eofBoundaries[version - 1];
+            const size = calculatedSize || clonedBytes.length;
             versions.push({
                 number: version,
-                pdfBytes: bytes,
-                size: bytes.length
+                pdfBytes: clonedBytes,
+                size: size
             });
         }
 
@@ -189,4 +221,31 @@ export async function getVersionCount(pdfBytes) {
 export async function hasMultipleVersions(pdfBytes) {
     const count = await getVersionCount(pdfBytes);
     return count > 1;
+}
+
+/**
+ * Find the byte offset of all %%EOF markers in a PDF.
+ * Useful for determining actual version boundaries since pdfresurrect
+ * copies the full file for each extracted version.
+ *
+ * @param {Uint8Array} pdfBytes - The PDF file bytes
+ * @returns {number[]} Array of byte offsets pointing to the end of each %%EOF marker
+ */
+export function findEofBoundaries(pdfBytes) {
+    const eofMarker = new Uint8Array([0x25, 0x25, 0x45, 0x4F, 0x46]); // %%EOF
+    const boundaries = [];
+
+    for (let i = 0; i < pdfBytes.length - eofMarker.length + 1; i++) {
+        let match = true;
+        for (let j = 0; j < eofMarker.length; j++) {
+            if (pdfBytes[i + j] !== eofMarker[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            boundaries.push(i + eofMarker.length);
+        }
+    }
+    return boundaries;
 }
