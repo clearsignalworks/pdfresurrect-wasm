@@ -87,6 +87,21 @@ pdfresurrect-wasm/
 └── LICENSE                    # BSD-3-Clause
 ```
 
+## Maintaining
+
+This package tracks upstream pdfresurrect updates using a two-branch workflow:
+
+- **`main`** - WASM port (published to npm)
+- **`master`** - Clean upstream tracking (no local modifications)
+
+**To incorporate upstream updates:**
+
+1. Pull upstream into master: `git fetch upstream && git checkout master && git merge upstream/master`
+2. Merge into main: `git checkout main && git merge master`
+3. Test, bump version, publish: `npm version patch && git push --tags && npm publish`
+
+See [MAINTAINING.md](./MAINTAINING.md) for detailed workflow documentation.
+
 ## Credits
 
 - Original C tool: [pdfresurrect by Matt Davis](https://github.com/enferex/pdfresurrect)
