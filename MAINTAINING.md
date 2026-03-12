@@ -49,7 +49,7 @@ npm test
 npm run test:quick
 ```
 
-`test:quick` runs `test/test_node.mjs` only — covers basic WASM loading and version counting with synthetic PDF data.
+`test:quick` runs `test/test_smoke.mjs` — verifies WASM module loads and public API exports are present. No fixture file required.
 
 `npm test` additionally runs `test/test_snowden.mjs` against the real Menwith Hill PDF. This test requires the fixture file described below.
 
