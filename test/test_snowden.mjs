@@ -14,7 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 console.log('Testing Snowden PDF: Menwith Hill Satellite Classification Guide\n');
 console.log('='.repeat(70) + '\n');
 
-const pdfPath = join(__dirname, 'Menwith-satellite-classification-guide.pdf');
+const pdfPath = join(__dirname, '..', 'examples', 'Menwith-satellite-classification-guide.pdf');
 const pdfBytes = readFileSync(pdfPath);
 
 console.log(`PDF file: ${pdfPath}`);
@@ -108,9 +108,9 @@ try {
 console.log('[4/4] Saving extracted versions to disk...');
 try {
     for (const v of cachedVersions) {
-        const filename = `snowden-version-${v.number}.pdf`;
+        const filename = join(__dirname, `snowden-version-${v.number}.pdf`);
         writeFileSync(filename, v.pdfBytes);
-        console.log(`  ✅ Saved ${filename} (${v.size} bytes)`);
+        console.log(`  ✅ Saved ${filename} (${(v.size / 1024).toFixed(1)} KB)`);
     }
 
     console.log('\n  Manual verification:');

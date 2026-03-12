@@ -46,7 +46,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "test": "node test/test_smoke.mjs && (test -f test/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: test/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:quick for smoke test only.' && exit 1)) && node test/test_snowden.mjs",
+    "test": "node test/test_smoke.mjs && (test -f examples/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: examples/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:quick for smoke test only.' && exit 1)) && node test/test_snowden.mjs",
     "test:quick": "node test/test_smoke.mjs"
   }
 }

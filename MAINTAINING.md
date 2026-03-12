@@ -55,9 +55,9 @@ npm run test:quick
 
 ### Snowden Fixture
 
-File: `test/Menwith-satellite-classification-guide.pdf`
+File: `examples/Menwith-satellite-classification-guide.pdf`
 
-This file is **gitignored** and must be obtained separately from the Snowden NSA document archive. It is required for `npm test` but not for `npm run test:quick`.
+This file is **tracked in git** and present in the repository. It is required for `npm test` but not for `npm run test:quick`.
 
 ## 5. Publish
 

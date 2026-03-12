@@ -5,3 +5,4 @@ pdfresurrect
 *.o
 .DS_Store
 tmp/
+test/snowden-version-*.pdf
