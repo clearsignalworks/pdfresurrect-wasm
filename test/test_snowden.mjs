@@ -30,6 +30,7 @@ try {
         console.log(`  ❌ CRITICAL: Only 1 version detected!`);
         console.log(`  Expected: Multiple versions (this is known multi-version PDF)`);
         console.log(`  This means multi-version extraction is NOT working.\n`);
+        process.exit(1);
     } else {
         console.log(`  ✅ Multiple versions detected!\n`);
     }
@@ -47,6 +48,7 @@ try {
     if (!hasMultiple) {
         console.log(`  ❌ CRITICAL: Returns false, expected true`);
         console.log(`  Multi-version detection is broken.\n`);
+        process.exit(1);
     } else {
         console.log(`  ✅ Correctly identified as multi-version PDF\n`);
     }
@@ -57,16 +59,17 @@ try {
 
 // Test 3: Extract all versions
 console.log('[3/4] Extracting all versions...');
+let cachedVersions;
 try {
     const startTime = performance.now();
-    const versions = await extractVersions(pdfBytes);
+    cachedVersions = await extractVersions(pdfBytes);
     const endTime = performance.now();
 
     const duration = (endTime - startTime).toFixed(2);
 
-    console.log(`  ✅ Extracted ${versions.length} version(s) in ${duration}ms\n`);
+    console.log(`  ✅ Extracted ${cachedVersions.length} version(s) in ${duration}ms\n`);
 
-    if (versions.length === 1) {
+    if (cachedVersions.length === 1) {
         console.log(`  ❌ CRITICAL FAILURE: Only extracted 1 version`);
         console.log(`  Expected: 2+ versions from incremental updates`);
         console.log(`  The core feature (version extraction) does NOT work.\n`);
@@ -75,7 +78,7 @@ try {
     }
 
     // Show details of each version
-    for (const v of versions) {
+    for (const v of cachedVersions) {
         console.log(`  Version ${v.number}:`);
         console.log(`    - Size: ${v.size} bytes (${(v.size / 1024).toFixed(1)} KB)`);
         console.log(`    - PDF header: ${String.fromCharCode(...v.pdfBytes.slice(0, 8))}`);
@@ -104,9 +107,7 @@ try {
 // Test 4: Save extracted versions to disk for manual inspection
 console.log('[4/4] Saving extracted versions to disk...');
 try {
-    const versions = await extractVersions(pdfBytes);
-
-    for (const v of versions) {
+    for (const v of cachedVersions) {
         const filename = `snowden-version-${v.number}.pdf`;
         writeFileSync(filename, v.pdfBytes);
         console.log(`  ✅ Saved ${filename} (${v.size} bytes)`);
@@ -124,11 +125,10 @@ try {
 
 // Final verdict
 console.log('='.repeat(70));
-const versions = await extractVersions(pdfBytes);
 
-if (versions.length > 1) {
+if (cachedVersions.length > 1) {
     console.log('✅ SUCCESS: Multi-version extraction WORKS!');
-    console.log(`✅ Extracted ${versions.length} versions from Snowden PDF`);
+    console.log(`✅ Extracted ${cachedVersions.length} versions from Snowden PDF`);
     console.log('✅ pdfresurrect-wasm validated with real multi-version PDF');
     console.log('✅ READY TO SHIP');
 } else {
