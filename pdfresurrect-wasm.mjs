@@ -40,7 +40,6 @@ async function getWasmModule() {
  * @property {number} number - Version number (1-indexed)
  * @property {Uint8Array} pdfBytes - The PDF file bytes for this version
  * @property {number} size - Size in bytes
- * @property {string} [timestamp] - Timestamp if available from metadata
  */
 
 /**
@@ -238,7 +237,7 @@ export async function hasMultipleVersions(pdfBytes) {
  * @param {Uint8Array} pdfBytes - The PDF file bytes
  * @returns {number[]} Array of byte offsets pointing to the end of each %%EOF marker
  */
-export function findEofBoundaries(pdfBytes) {
+function findEofBoundaries(pdfBytes) {
     const eofMarker = new Uint8Array([0x25, 0x25, 0x45, 0x4F, 0x46]); // %%EOF
     const boundaries = [];
 

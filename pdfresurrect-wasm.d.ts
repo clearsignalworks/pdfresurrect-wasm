@@ -54,12 +54,3 @@ export function getVersionCount(pdfBytes: Uint8Array): Promise<number>;
  * @returns true if the PDF has more than one version
  */
 export function hasMultipleVersions(pdfBytes: Uint8Array): Promise<boolean>;
-
-/**
- * Find the byte offset of all %%EOF markers in a PDF.
- * Useful for determining actual version boundaries.
- *
- * @param pdfBytes - Raw bytes of the PDF file
- * @returns Array of byte offsets at the end of each %%EOF marker
- */
-export function findEofBoundaries(pdfBytes: Uint8Array): number[];
