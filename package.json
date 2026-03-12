@@ -9,7 +9,8 @@
     ".": {
       "import": "./pdfresurrect-wasm.mjs",
       "types": "./pdfresurrect-wasm.d.ts"
-    }
+    },
+    "./pdfresurrect_full.js": "./pdfresurrect_full.js"
   },
   "files": [
     "pdfresurrect-wasm.mjs",
