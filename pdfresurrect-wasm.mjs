@@ -46,6 +46,12 @@ async function getWasmModule() {
 /**
  * Extract all versions from a PDF with incremental updates
  *
+ * **Performance:** Runs synchronously on the calling thread via `callMain()`.
+ * Scaling is ~O(n²) because each version requires a full-file copy into WASM
+ * MEMFS. Typical times: <25ms for small PDFs (134KB/2 versions), ~2.5s for
+ * 4.8MB/50-version PDFs. For PDFs >5MB or >20 versions, run in a Web Worker
+ * to avoid blocking the UI thread.
+ *
  * @param {Uint8Array} pdfBytes - The PDF file bytes
  * @returns {Promise<PDFVersion[]>} Array of versions, oldest first
  *

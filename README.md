@@ -87,6 +87,28 @@ pdfresurrect-wasm/
 └── LICENSE                    # BSD-3-Clause
 ```
 
+## Performance
+
+Extraction time scales superlinearly (~O(n²)) because pdfresurrect copies the full file for each version: extracting version N requires writing the first N × EOF-offset bytes into WASM's in-memory filesystem. File I/O is negligible (~6ms for a 19MB read); the cost is entirely in `callMain()`.
+
+| PDF Size | Versions | Avg Extraction Time |
+|----------|----------|---------------------|
+| 134 KB   | 2        | 21 ms               |
+| 978 KB   | 10       | 174 ms              |
+| 4.8 MB   | 50       | 2.5 s               |
+| 19 MB    | 100      | 19.9 s              |
+
+**`extractVersions()` runs synchronously on the calling thread.** For PDFs larger than ~5 MB or with more than ~20 versions, run extraction in a Web Worker to avoid freezing the UI:
+
+```js
+// worker.js
+import { extractVersions } from 'pdfresurrect-wasm';
+self.onmessage = async ({ data }) => {
+  const versions = await extractVersions(data);
+  self.postMessage(versions);
+};
+```
+
 ## Maintaining
 
 This package tracks upstream pdfresurrect updates using a two-branch workflow:
