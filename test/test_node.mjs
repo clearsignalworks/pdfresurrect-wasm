@@ -10,7 +10,7 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Load WASM module
-const createModule = (await import('./test_minimal.js')).default;
+const createModule = (await import('../test_minimal.js')).default;
 const wasm = await createModule();
 
 console.log('✅ WASM module loaded successfully\n');
