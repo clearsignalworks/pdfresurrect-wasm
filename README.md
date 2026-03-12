@@ -57,7 +57,7 @@ module.exports = {
 
 ## API
 
-**`extractVersions(pdfBytes: Uint8Array): Promise<Version[]>`**
+**`extractVersions(pdfBytes: Uint8Array): Promise<PDFVersion[]>`**
 Extract all versions from a PDF.
 
 **`getVersionCount(pdfBytes: Uint8Array): Promise<number>`**
@@ -72,8 +72,8 @@ Tested with Snowden NSA documents known to contain deleted content:
 - ✅ Extracts 2 versions from Menwith Hill classification guide
 - ✅ Version 1 contains deleted Potomac Mission Ground Station details
 - ✅ Version 2 is the published scrubbed version
-- ✅ Performance: 19.65ms for 134KB PDF
-- ✅ Binary size: 97KB total
+- ✅ Performance: 21ms for 134KB PDF
+- ✅ Binary size: 99KB total (37KB WASM + 60KB glue JS)
 
 ## Package Contents
 
@@ -82,7 +82,7 @@ pdfresurrect-wasm/
 ├── pdfresurrect-wasm.mjs      # Main API (ESM)
 ├── pdfresurrect-wasm.d.ts     # TypeScript definitions
 ├── pdfresurrect_full.js       # Emscripten glue code
-├── pdfresurrect_full.wasm     # Compiled binary (37KB)
+├── pdfresurrect_full.wasm     # Compiled binary (38KB)
 ├── README.md
 └── LICENSE                    # BSD-3-Clause
 ```
@@ -120,7 +120,7 @@ This package tracks upstream pdfresurrect updates using a two-branch workflow:
 
 1. Pull upstream into master: `git fetch upstream && git checkout master && git merge upstream/master`
 2. Merge into main: `git checkout main && git merge master`
-3. Test, bump version, publish: `npm version patch && git push --tags && npm publish`
+3. Test, bump version, publish: `npm version patch && npm publish`
 
 See [MAINTAINING.md](./MAINTAINING.md) for detailed workflow documentation.
 
