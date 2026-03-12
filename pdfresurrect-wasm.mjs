@@ -56,6 +56,7 @@ async function getWasmModule() {
  * versions.forEach(v => console.log(`Version ${v.number}: ${v.size} bytes`));
  */
 export async function extractVersions(pdfBytes) {
+    if (typeof BigInt === 'undefined') throw new Error('pdfresurrect-wasm requires BigInt support (Chrome 67+, Firefox 68+, Safari 14+). Please update your browser.');
     if (!(pdfBytes instanceof Uint8Array)) {
         throw new TypeError('pdfBytes must be a Uint8Array');
     }

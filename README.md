@@ -35,7 +35,7 @@ versions.forEach(v => {
 
 ### Browser Usage
 
-Requires WebAssembly support (Chrome 57+, Firefox 52+, Safari 11+, Node 16+).
+Requires BigInt support (Chrome 67+, Firefox 68+, Safari 14+, Node 16+). Emscripten 4.x enables wasm-bigint by default, requiring BigInt support in the JS engine.
 
 You'll need to configure your bundler to handle the `.wasm` file:
 
