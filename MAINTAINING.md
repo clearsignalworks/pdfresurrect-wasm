@@ -1,108 +1,89 @@
-# Maintaining pdfresurrect-wasm
+# pdfresurrect-wasm Maintenance Runbook
 
-This document explains how to maintain this repository and incorporate upstream changes from the original pdfresurrect project.
+## Prerequisites
 
-## Branch Structure
+- **Emscripten 4.0.x** — known-good version: **4.0.22**
+- Install: https://emscripten.org/docs/getting_started/downloads.html
+- Verify: `emcc --version`
+- Node.js >= 16
 
-This repository uses a **two-branch workflow** to separate upstream tracking from our WASM work:
-
-- **`main`** - Our WASM port (published to npm)
-  - Contains: Upstream C code + WASM compilation layer + npm packaging
-  - This is the default branch and what gets published
-
-- **`master`** - Clean upstream tracking branch
-  - Mirrors the upstream pdfresurrect repository (https://github.com/enferex/pdfresurrect)
-  - Contains ONLY upstream C code, no local modifications
-  - Used to pull in updates from upstream
-
-## Upstream Sync Workflow
-
-When upstream releases a new version of pdfresurrect, follow these steps:
-
-### 1. Fetch Upstream Changes
+## 1. Check for Upstream Updates
 
 ```bash
-cd pdfresurrect-wasm
 git fetch upstream
+git log master..upstream/master --oneline
 ```
 
-### 2. Update Master Branch
+If there are commits listed, proceed to step 2. Otherwise skip to step 4.
+
+## 2. Merge Upstream Changes
 
 ```bash
 git checkout master
 git merge upstream/master
 git push origin master
-```
 
-This keeps `master` in sync with upstream.
-
-### 3. Merge Into Main
-
-```bash
 git checkout main
 git merge master
 ```
 
-This brings upstream changes into your WASM work.
+Resolve any conflicts, keeping WASM-specific changes in `main.c` while integrating upstream fixes. Test after merging.
 
-### 4. Resolve Conflicts (if any)
-
-If upstream modified files that we've changed for WASM (like `main.c`):
-
-1. Review conflicts carefully
-2. Keep WASM-specific changes
-3. Integrate upstream bug fixes or improvements
-4. Test thoroughly
-
-### 5. Test WASM Build
+## 3. Build
 
 ```bash
-# Test that WASM compilation still works
-# Test that npm package exports work correctly
-# Run any existing tests
+./build.sh
 ```
 
-### 6. Update Version and Publish
+The script checks that `emcc` is present and warns if the version is not 4.0.x. On success it prints file sizes for `pdfresurrect_full.wasm` and `pdfresurrect_full.js`.
+
+## 4. Validate
+
+**Full test suite** (requires Snowden fixture — see below):
+```bash
+npm test
+```
+
+**Smoke test** (no Snowden fixture needed):
+```bash
+npm run test:quick
+```
+
+`test:quick` runs `test/test_node.mjs` only — covers basic WASM loading and version counting with synthetic PDF data.
+
+`npm test` additionally runs `test/test_snowden.mjs` against the real Menwith Hill PDF. This test requires the fixture file described below.
+
+### Snowden Fixture
+
+File: `test/Menwith-satellite-classification-guide.pdf`
+
+This file is **gitignored** and must be obtained separately from the Snowden NSA document archive. It is required for `npm test` but not for `npm run test:quick`.
+
+## 5. Publish
 
 ```bash
-# Update version in package.json (follow semantic versioning)
-npm version patch  # or minor/major as appropriate
-git push origin main --tags
-npm publish
+npm version patch   # or minor / major per semver rules
+npm publish --access public
 ```
 
-## Why This Structure?
-
-**Keeps upstream clean:** The `master` branch remains a pure mirror of upstream, making it easy to see what changed upstream vs what we added.
-
-**Simplifies merging:** When merging `master` into `main`, git can clearly see which changes are ours vs theirs.
-
-**Preserves attribution:** Upstream commit history is preserved in `master`, our WASM work is layered on top in `main`.
+`npm version` tags the commit automatically. The post-commit hook pushes to origin.
 
 ## Remote Configuration
 
-```bash
-# Upstream (original pdfresurrect)
+```
 upstream  https://github.com/enferex/pdfresurrect.git
-
-# Origin (our fork)
 origin    git@github.com:clearsignalworks/pdfresurrect-wasm.git
 ```
 
-Verify with: `git remote -v`
+Verify: `git remote -v`
 
 ## Quick Reference
 
 | Task | Command |
 |------|---------|
 | Check for upstream updates | `git fetch upstream && git log master..upstream/master` |
-| Pull upstream to master | `git checkout master && git merge upstream/master` |
-| Merge upstream into main | `git checkout main && git merge master` |
-| Publish new version | `npm version patch && git push --tags && npm publish` |
-
-## Notes
-
-- **Never commit WASM work to master** - Keep it clean for upstream tracking
-- **Always merge master → main** - Never the other way around
-- **Test thoroughly after merging** - Upstream changes might break WASM compilation
-- **Document breaking changes** - Note in CHANGELOG if upstream update requires API changes
+| Merge upstream | `git checkout master && git merge upstream/master && git checkout main && git merge master` |
+| Build | `./build.sh` |
+| Smoke test | `npm run test:quick` |
+| Full test | `npm test` |
+| Publish patch | `npm version patch && npm publish --access public` |
