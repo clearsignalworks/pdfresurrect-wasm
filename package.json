@@ -1,6 +1,6 @@
 {
   "name": "pdfresurrect-wasm",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Extract hidden versions from PDF incremental updates - WebAssembly port of pdfresurrect",
   "type": "module",
   "main": "pdfresurrect-wasm.mjs",
@@ -47,7 +47,8 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "test": "node test/test_smoke.mjs && (test -f examples/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: examples/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:quick for smoke test only.' && exit 1)) && node test/test_snowden.mjs",
-    "test:quick": "node test/test_smoke.mjs"
+    "test": "node test/test_smoke.mjs && node test/test_errors.mjs && (test -f examples/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: examples/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:ci for tests without fixtures.' && exit 1)) && node test/test_snowden.mjs",
+    "test:quick": "node test/test_smoke.mjs",
+    "test:ci": "node test/test_smoke.mjs && node test/test_errors.mjs"
   }
 }

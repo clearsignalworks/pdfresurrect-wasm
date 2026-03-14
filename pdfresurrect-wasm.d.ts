@@ -40,7 +40,7 @@ export interface PDFVersion {
 export function extractVersions(pdfBytes: Uint8Array): Promise<PDFVersion[]>;
 
 /**
- * Get the number of versions in a PDF without extracting them.
+ * Get the number of versions in a PDF.
  *
  * @param pdfBytes - Raw bytes of the PDF file
  * @returns Number of versions found

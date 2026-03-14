@@ -105,110 +105,102 @@ export async function extractVersions(pdfBytes) {
     // Write PDF to virtual filesystem
     wasm.FS.writeFile('/input.pdf', pdfBytes);
 
+    // Extract versions with -w flag (writes to /input-versions/ directory)
+    // Suppress output to console
+    const originalPrint = wasm.print;
+    const originalPrintErr = wasm.printErr;
+
+    wasm.print = () => {};  // Suppress stdout
+    wasm.printErr = () => {}; // Suppress stderr
+
+    let extractExitCode;
     try {
-        // Extract versions with -w flag (writes to /input-versions/ directory)
-        // Suppress output to console
-        const originalPrint = wasm.print;
-        const originalPrintErr = wasm.printErr;
-
-        wasm.print = () => {};  // Suppress stdout
-        wasm.printErr = () => {}; // Suppress stderr
-
-        let extractExitCode;
-        try {
-            extractExitCode = wasm.callMain(['/input.pdf', '-w']);
-        } catch (exitErr) {
-            // Emscripten throws ExitStatus on C exit() calls, which leaves
-            // the WASM module in an undefined state. Reset so next call
-            // reinitializes cleanly.
-            wasmModule = null;
-            wasmInitPromise = null;
-            throw new Error(
-                `pdfresurrect crashed (likely malformed PDF): ${exitErr.message || exitErr}`
-            );
-        } finally {
-            // Restore output even if callMain throws
-            wasm.print = originalPrint;
-            wasm.printErr = originalPrintErr;
-        }
-
-        if (extractExitCode !== 0) {
-            console.warn(
-                `[pdfresurrect-wasm] Version extraction returned exit code ${extractExitCode}. ` +
-                `Falling back to single-version mode.`
-            );
-            const clonedBytes = new Uint8Array(pdfBytes.length);
-            clonedBytes.set(pdfBytes);
-            return [{
-                number: 1,
-                pdfBytes: clonedBytes,
-                size: clonedBytes.length
-            }];
-        }
-
-        // Read extracted version files from virtual filesystem
-        const versions = [];
-        const dirName = '/input-versions';
-
-        let files;
-        try {
-            files = wasm.FS.readdir(dirName);
-        } catch (e) {
-            // Directory doesn't exist = only 1 version (pdfresurrect exits early)
-            const clonedBytes = new Uint8Array(pdfBytes.length);
-            clonedBytes.set(pdfBytes);
-            return [{
-                number: 1,
-                pdfBytes: clonedBytes,
-                size: clonedBytes.length
-            }];
-        }
-
-        // Filter for PDF files and sort by version number
-        const pdfFiles = files
-            .filter(f => f.endsWith('.pdf'))
-            .map(f => {
-                // Extract version number from filename like "input-version-1.pdf"
-                const match = f.match(/version-(\d+)\.pdf$/);
-                return match ? { filename: f, version: parseInt(match[1], 10) } : null;
-            })
-            .filter(x => x !== null)
-            .sort((a, b) => a.version - b.version);
-
-        // Use %%EOF boundaries for accurate version sizes
-        // pdfresurrect copies the full file for each version, so file size is misleading
-        const eofBoundaries = findEofBoundaries(pdfBytes);
-
-        // Read each version file
-        for (const { filename, version } of pdfFiles) {
-            const filePath = `${dirName}/${filename}`;
-            const bytes = wasm.FS.readFile(filePath);
-            const clonedBytes = new Uint8Array(bytes.length);
-            clonedBytes.set(bytes);
-
-            const calculatedSize = eofBoundaries[version - 1];
-            const size = calculatedSize || clonedBytes.length;
-            versions.push({
-                number: version,
-                pdfBytes: clonedBytes,
-                size: size
-            });
-        }
-
-        if (versions.length === 0) {
-            throw new Error('No version files were extracted');
-        }
-
-        return versions;
-
-    } catch (e) {
-        // Re-throw with more context if needed
-        throw e;
+        extractExitCode = wasm.callMain(['/input.pdf', '-w']);
+    } catch (exitErr) {
+        // Emscripten throws ExitStatus on C exit() calls, which leaves
+        // the WASM module in an undefined state. Reset so next call
+        // reinitializes cleanly.
+        wasmModule = null;
+        wasmInitPromise = null;
+        throw new Error(
+            `pdfresurrect crashed (likely malformed PDF): ${exitErr.message || exitErr}`
+        );
+    } finally {
+        // Restore output even if callMain throws
+        wasm.print = originalPrint;
+        wasm.printErr = originalPrintErr;
     }
+
+    if (extractExitCode !== 0) {
+        console.warn(
+            `[pdfresurrect-wasm] Version extraction returned exit code ${extractExitCode}. ` +
+            `Falling back to single-version mode.`
+        );
+        const clonedBytes = new Uint8Array(pdfBytes.length);
+        clonedBytes.set(pdfBytes);
+        return [{
+            number: 1,
+            pdfBytes: clonedBytes,
+            size: clonedBytes.length
+        }];
+    }
+
+    // Read extracted version files from virtual filesystem
+    const versions = [];
+    const dirName = '/input-versions';
+
+    let files;
+    try {
+        files = wasm.FS.readdir(dirName);
+    } catch (e) {
+        // Directory doesn't exist = only 1 version (pdfresurrect exits early)
+        const clonedBytes = new Uint8Array(pdfBytes.length);
+        clonedBytes.set(pdfBytes);
+        return [{
+            number: 1,
+            pdfBytes: clonedBytes,
+            size: clonedBytes.length
+        }];
+    }
+
+    // Filter for PDF files and sort by version number
+    const pdfFiles = files
+        .filter(f => f.endsWith('.pdf'))
+        .map(f => {
+            // Extract version number from filename like "input-version-1.pdf"
+            const match = f.match(/version-(\d+)\.pdf$/);
+            return match ? { filename: f, version: parseInt(match[1], 10) } : null;
+        })
+        .filter(x => x !== null)
+        .sort((a, b) => a.version - b.version);
+
+    // Use %%EOF boundaries for accurate version sizes
+    // pdfresurrect copies the full file for each version, so file size is misleading
+    const eofBoundaries = findEofBoundaries(pdfBytes);
+
+    // Read each version file
+    for (const { filename, version } of pdfFiles) {
+        const filePath = `${dirName}/${filename}`;
+        const bytes = wasm.FS.readFile(filePath);
+        const clonedBytes = new Uint8Array(bytes.length);
+        clonedBytes.set(bytes);
+
+        versions.push({
+            number: version,
+            pdfBytes: clonedBytes,
+            size: clonedBytes.length
+        });
+    }
+
+    if (versions.length === 0) {
+        throw new Error('No version files were extracted');
+    }
+
+    return versions;
 }
 
 /**
- * Get just the count of versions in a PDF
+ * Get the number of versions in a PDF.
  *
  * @param {Uint8Array} pdfBytes - The PDF file bytes
  * @returns {Promise<number>} Number of versions
