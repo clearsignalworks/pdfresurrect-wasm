@@ -6,3 +6,4 @@ pdfresurrect
 .DS_Store
 tmp/
 test/snowden-version-*.pdf
+.trees/
