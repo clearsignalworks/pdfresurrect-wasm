@@ -110,7 +110,21 @@ self.onmessage = async ({ data }) => {
 
 ## Maintaining
 
-`main` carries the WebAssembly port and is what npm publishes. `master` tracks upstream pdfresurrect with no local changes. [MAINTAINING.md](./MAINTAINING.md) has the runbook: remote setup, pulling upstream, rebuilding, testing and publishing.
+Two branches. `master` mirrors upstream pdfresurrect with no local changes. `main` carries the
+port: the JavaScript wrapper, the build script, the tests and these docs. The C sources on
+`main` are byte-identical to upstream, so a merge conflict in a `.c` or `.h` file means take
+upstream's side.
+
+A fresh clone has only `origin`. Add the upstream remote once:
+
+```bash
+git remote add upstream https://github.com/enferex/pdfresurrect.git
+git remote set-url --push upstream no_push
+```
+
+To take an upstream release: merge `upstream/master` into `master`, merge `master` into `main`,
+run `./build.sh` (needs Emscripten 4.0.x; the script checks), run `npm test`, then
+`npm version patch && npm publish --access public`.
 
 ## Credits
 
