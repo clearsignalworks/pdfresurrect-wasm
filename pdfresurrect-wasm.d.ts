@@ -25,7 +25,13 @@ export interface PDFVersion {
  *
  * @param pdfBytes - Raw bytes of the PDF file
  * @returns Array of Version objects, ordered from earliest (1) to latest
- * @throws Error if PDF is too small (<1024 bytes) or invalid
+ * @throws TypeError if pdfBytes is not a Uint8Array
+ * @throws Error if the PDF is smaller than 1024 bytes, or if the extractor crashes
+ *
+ * If the underlying tool exits non-zero (for example the bytes are not a PDF),
+ * this does NOT throw: it logs a console.warn and resolves with a single version
+ * whose pdfBytes is a copy of the input. A one-element result therefore means
+ * either "one version" or "extraction failed"; the warning is the only signal.
  *
  * @example
  * ```typescript

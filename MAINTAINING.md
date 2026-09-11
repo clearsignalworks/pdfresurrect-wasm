@@ -67,6 +67,9 @@ This file is **tracked in git** and present in the repository. It is required fo
 
 ## 5. Publish
 
+The GitHub repository must be public. package.json's repository, homepage and bugs
+links point at it, and npm renders them on the package page for anonymous visitors.
+
 ```bash
 npm version patch   # or minor / major per semver rules
 npm publish --access public

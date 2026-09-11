@@ -34,3 +34,6 @@ chibataiki: Reported and isolated an infinite loop in the trailer search.
 jwilk: Spelling corrections in comments.
 
 a1346054: Spacing/comment/license cleanup.
+
+Clear Signal Works (clearsignalworks): WebAssembly port and JavaScript API
+                                       (pdfresurrect-wasm.mjs, build.sh).

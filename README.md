@@ -76,7 +76,7 @@ Tested with Snowden NSA documents known to contain deleted content:
 ## Package Contents
 
 ```
-pdfresurrect-wasm/
+node_modules/@clearsignalworks/pdfresurrect-wasm/
 ├── pdfresurrect-wasm.mjs      # Main API (ESM)
 ├── pdfresurrect-wasm.d.ts     # TypeScript definitions
 ├── pdfresurrect_full.js       # Emscripten glue code
