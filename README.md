@@ -110,18 +110,7 @@ self.onmessage = async ({ data }) => {
 
 ## Maintaining
 
-This package tracks upstream pdfresurrect updates using a two-branch workflow:
-
-- **`main`** - WASM port (published to npm)
-- **`master`** - Clean upstream tracking (no local modifications)
-
-**To incorporate upstream updates:**
-
-1. Pull upstream into master: `git fetch upstream && git checkout master && git merge upstream/master`
-2. Merge into main: `git checkout main && git merge master`
-3. Test, bump version, publish: `npm version patch && npm publish --access public`
-
-See [MAINTAINING.md](./MAINTAINING.md) for detailed workflow documentation.
+`main` carries the WebAssembly port and is what npm publishes. `master` tracks upstream pdfresurrect with no local changes. [MAINTAINING.md](./MAINTAINING.md) has the runbook: remote setup, pulling upstream, rebuilding, testing and publishing.
 
 ## Credits
 

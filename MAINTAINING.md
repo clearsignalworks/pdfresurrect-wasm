@@ -6,6 +6,12 @@
 - Install: https://emscripten.org/docs/getting_started/downloads.html
 - Verify: `emcc --version`
 - Node.js >= 16
+- An `upstream` remote pointing at the original C project. A fresh clone has only `origin`; add it once:
+
+```bash
+git remote add upstream https://github.com/enferex/pdfresurrect.git
+git remote set-url --push upstream no_push
+```
 
 ## 1. Check for Upstream Updates
 
@@ -27,7 +33,7 @@ git checkout main
 git merge master
 ```
 
-Resolve any conflicts, keeping WASM-specific changes in `main.c` while integrating upstream fixes. Test after merging.
+The C sources on `main` are identical to upstream; only the JavaScript wrapper, build script, tests and docs are ours. A conflict in a `.c` or `.h` file means take upstream's side. Test after merging.
 
 ## 3. Build
 
