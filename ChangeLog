@@ -1,3 +1,21 @@
+-- @clearsignalworks/pdfresurrect-wasm 0.1.0 --
+* First npm release of the WebAssembly port. The C sources below are
+  upstream pdfresurrect 0.24b, unmodified; entries below this one are the
+  upstream C tool's history.
+
+* JavaScript API (ESM only): extractVersions(), getVersionCount(),
+  hasMultipleVersions(). Each takes a Uint8Array and returns a Promise.
+  TypeScript definitions included.
+
+* Runs in browsers with BigInt support (Chrome 67+, Firefox 68+,
+  Safari 14+) and in Node 16+.
+
+* The compiled module is created with noInitialRun and silent output
+  handlers, so loading the package prints nothing to the console.
+
+* Subpath export ./pdfresurrect_full.js exposes the raw Emscripten
+  factory for callers that need their own module options.
+
 -- Version 0.23 --
 * Changed license from GPLv3 to BSD 3-Clause.
 

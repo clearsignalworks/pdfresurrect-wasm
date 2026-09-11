@@ -1,15 +1,13 @@
 # pdfresurrect-wasm
 
-[![npm version](https://badge.fury.io/js/pdfresurrect-wasm.svg)](https://www.npmjs.com/package/pdfresurrect-wasm)
-
 WebAssembly port of [pdfresurrect](https://github.com/enferex/pdfresurrect) - Extract hidden versions from PDF incremental updates.
 
 ## Installation
 
 ```bash
-npm install pdfresurrect-wasm
+npm install @clearsignalworks/pdfresurrect-wasm
 # or
-bun add pdfresurrect-wasm
+bun add @clearsignalworks/pdfresurrect-wasm
 ```
 
 ## What It Does
@@ -21,7 +19,7 @@ pdfresurrect-wasm extracts these hidden versions, revealing the document's full 
 ## Quick Start
 
 ```javascript
-import { extractVersions } from 'pdfresurrect-wasm';
+import { extractVersions } from '@clearsignalworks/pdfresurrect-wasm';
 
 const pdfBytes = await fetch('document.pdf').then(r => r.arrayBuffer());
 const versions = await extractVersions(new Uint8Array(pdfBytes));
@@ -43,7 +41,7 @@ You'll need to configure your bundler to handle the `.wasm` file:
 // Vite / Astro
 export default {
   optimizeDeps: {
-    exclude: ['pdfresurrect-wasm']
+    exclude: ['@clearsignalworks/pdfresurrect-wasm']
   }
 }
 
@@ -83,6 +81,7 @@ pdfresurrect-wasm/
 ├── pdfresurrect-wasm.d.ts     # TypeScript definitions
 ├── pdfresurrect_full.js       # Emscripten glue code
 ├── pdfresurrect_full.wasm     # Compiled binary (38KB)
+├── ChangeLog
 ├── README.md
 └── LICENSE                    # BSD-3-Clause
 ```
@@ -102,7 +101,7 @@ Extraction time scales superlinearly (~O(n²)) because pdfresurrect copies the f
 
 ```js
 // worker.js
-import { extractVersions } from 'pdfresurrect-wasm';
+import { extractVersions } from '@clearsignalworks/pdfresurrect-wasm';
 self.onmessage = async ({ data }) => {
   const versions = await extractVersions(data);
   self.postMessage(versions);
@@ -120,7 +119,7 @@ This package tracks upstream pdfresurrect updates using a two-branch workflow:
 
 1. Pull upstream into master: `git fetch upstream && git checkout master && git merge upstream/master`
 2. Merge into main: `git checkout main && git merge master`
-3. Test, bump version, publish: `npm version patch && npm publish`
+3. Test, bump version, publish: `npm version patch && npm publish --access public`
 
 See [MAINTAINING.md](./MAINTAINING.md) for detailed workflow documentation.
 

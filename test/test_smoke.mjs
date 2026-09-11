@@ -24,7 +24,7 @@ console.log('PASS: public API exports present');
 // Import pdfresurrect_full.js directly to bypass the wrapper's input-size guard.
 try {
     const createModule = (await import('../pdfresurrect_full.js')).default;
-    const wasm = await createModule();
+    const wasm = await createModule({ noInitialRun: true });
 
     assert(typeof wasm.FS === 'object', 'wasm.FS must be an object');
     assert(typeof wasm.callMain === 'function', 'wasm.callMain must be a function');

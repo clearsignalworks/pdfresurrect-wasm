@@ -24,9 +24,15 @@ async function getWasmModule() {
     wasmInitPromise = (async () => {
         const createModule = (await import('./pdfresurrect_full.js')).default;
 
-        // Create module without options - this allows print/printErr to be
-        // mutable and overridable by callers
-        wasmModule = await createModule();
+        // noInitialRun: without it Emscripten runs main() with no arguments at
+        // load time, which prints the CLI usage banner to stdout.
+        // print/printErr must be passed here: the glue binds its output
+        // functions once at creation, so assigning them later has no effect.
+        wasmModule = await createModule({
+            noInitialRun: true,
+            print: () => {},
+            printErr: () => {},
+        });
 
         return wasmModule;
     })();
@@ -106,13 +112,6 @@ export async function extractVersions(pdfBytes) {
     wasm.FS.writeFile('/input.pdf', pdfBytes);
 
     // Extract versions with -w flag (writes to /input-versions/ directory)
-    // Suppress output to console
-    const originalPrint = wasm.print;
-    const originalPrintErr = wasm.printErr;
-
-    wasm.print = () => {};  // Suppress stdout
-    wasm.printErr = () => {}; // Suppress stderr
-
     let extractExitCode;
     try {
         extractExitCode = wasm.callMain(['/input.pdf', '-w']);
@@ -125,10 +124,6 @@ export async function extractVersions(pdfBytes) {
         throw new Error(
             `pdfresurrect crashed (likely malformed PDF): ${exitErr.message || exitErr}`
         );
-    } finally {
-        // Restore output even if callMain throws
-        wasm.print = originalPrint;
-        wasm.printErr = originalPrintErr;
     }
 
     if (extractExitCode !== 0) {
