@@ -1,6 +1,6 @@
 {
   "name": "@clearsignalworks/pdfresurrect-wasm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extract hidden versions from PDF incremental updates - WebAssembly port of pdfresurrect",
   "type": "module",
   "main": "pdfresurrect-wasm.mjs",

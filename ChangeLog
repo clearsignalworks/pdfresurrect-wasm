@@ -1,3 +1,6 @@
+-- @clearsignalworks/pdfresurrect-wasm 0.1.1 --
+* No functional change; version bump only.
+
 -- @clearsignalworks/pdfresurrect-wasm 0.1.0 --
 * First npm release of the WebAssembly port. The C sources below are
   upstream pdfresurrect 0.24b, unmodified; entries below this one are the
