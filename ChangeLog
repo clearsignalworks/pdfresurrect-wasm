@@ -1,3 +1,8 @@
+-- @clearsignalworks/pdfresurrect-wasm 0.1.2 --
+* Subpath export ./pdfresurrect_full.js now has a types condition
+  (pdfresurrect_full.d.ts), so importing the raw Emscripten factory
+  directly no longer needs a hand-written module declaration.
+
 -- @clearsignalworks/pdfresurrect-wasm 0.1.1 --
 * No functional change; version bump only.
 
