@@ -80,6 +80,7 @@ node_modules/@clearsignalworks/pdfresurrect-wasm/
 ├── pdfresurrect-wasm.mjs      # Main API (ESM)
 ├── pdfresurrect-wasm.d.ts     # TypeScript definitions
 ├── pdfresurrect_full.js       # Emscripten glue code
+├── pdfresurrect_full.d.ts     # TypeScript definitions for the glue subpath
 ├── pdfresurrect_full.wasm     # Compiled binary (38KB)
 ├── ChangeLog
 ├── README.md

@@ -4,6 +4,7 @@ Makefile
 pdfresurrect
 *.o
 .DS_Store
+node_modules/
 tmp/
 test/snowden-version-*.pdf
 .trees/

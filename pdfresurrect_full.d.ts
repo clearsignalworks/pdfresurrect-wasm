@@ -19,6 +19,12 @@ export interface PdfresurrectFS {
 /** The initialized module instance passed to onRuntimeInitialized and returned by the factory. */
 export interface PdfresurrectModule {
   FS: PdfresurrectFS;
+  /**
+   * View onto the module's WASM memory. Emscripten replaces this property
+   * (and detaches any reference you kept) whenever memory grows, which can
+   * happen on any callMain() call. Read wasm.HEAPU8 fresh each time; do not
+   * cache it across calls.
+   */
   HEAPU8: Uint8Array;
   /** Runs the compiled tool's main() with the given argv; returns its exit code. */
   callMain(args: string[]): number;

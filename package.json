@@ -56,8 +56,11 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "test": "node test/test_smoke.mjs && node test/test_errors.mjs && (test -f examples/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: examples/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:ci for tests without fixtures.' && exit 1)) && node test/test_snowden.mjs",
+    "test": "node test/test_smoke.mjs && node test/test_errors.mjs && node test/test_types.mjs && (test -f examples/Menwith-satellite-classification-guide.pdf || (echo 'ERROR: Snowden fixture missing: examples/Menwith-satellite-classification-guide.pdf' && echo 'Obtain from the Snowden NSA document archive. Run npm run test:ci for tests without fixtures.' && exit 1)) && node test/test_snowden.mjs",
     "test:quick": "node test/test_smoke.mjs",
-    "test:ci": "node test/test_smoke.mjs && node test/test_errors.mjs"
+    "test:ci": "node test/test_smoke.mjs && node test/test_errors.mjs && node test/test_types.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
   }
 }
