@@ -125,7 +125,7 @@ git remote set-url --push upstream no_push
 
 To take an upstream release: merge `upstream/master` into `master`, merge `master` into `main`,
 run `./build.sh` (needs Emscripten 4.0.x; the script checks), run `npm test`, then
-`npm version patch && npm publish --access public`.
+`npm version patch && npm publish`.
 
 ## Credits
 
